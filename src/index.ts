@@ -1,17 +1,42 @@
 import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
-import { postsRoutes } from "./routes/posts";
-import { feedWebSocket } from "./websockets/feed";
+import { postsRoutes } from "./routes/posts.routes";
+import { feedWebSocket } from "./websockets/feed.ws";
 
 const app = new Elysia()
   .use(cors())
-  .use(postsRoutes) // Monta las rutas de posts
-  .use(feedWebSocket) // Monta el WebSocket del feed
-  .get("/health", () => ({ status: "ok" }))
+
+  // Montar rutas HTTP
+  .use(postsRoutes)
+
+  // Montar WebSockets
+  .use(feedWebSocket)
+
+  // Health check
+  .get("/health", () => ({
+    status: "ok",
+    timestamp: new Date(),
+    uptime: process.uptime(),
+  }))
+
+  // Manejo de 404
+  .onError(({ code, error }) => {
+    if (code === "NOT_FOUND") {
+      return {
+        success: false,
+        error: "Endpoint no encontrado",
+      };
+    }
+
+    return {
+      success: false,
+      error: error,
+    };
+  })
+
   .listen(3001);
 
-console.log(
-  `🚀 Backend corriendo en ${app.server?.hostname}:${app.server?.port}
-  posts: http://localhost:3001/posts
-  websocket: ws://localhost:3001/ws/feed`,
-);
+console.log(`
+🚀 Servidor corriendo en http://localhost:${app.server?.port}
+📡 WebSocket Feed: ws://localhost:${app.server?.port}/ws/feed
+`);
