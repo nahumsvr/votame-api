@@ -1,17 +1,15 @@
 // src/routes/votes.routes.ts
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { VotesController } from "../controllers/votes.controller";
+import { voteSchema, getPostScoreSchema } from "../validators/votes.validator";
 
 export const votesRoutes = new Elysia({ prefix: "/votes" })
   // POST /votes - Votar
   .post(
     "/",
     async ({ body, server }) => {
-      const result = await VotesController.vote(
-        body.postId,
-        body.userName,
-        body.value,
-      );
+      const { postId, userName, value } = body;
+      const result = await VotesController.vote(postId, userName, value);
 
       // Notificar cambio de puntos por WebSocket
       if (result.success) {
@@ -19,9 +17,9 @@ export const votesRoutes = new Elysia({ prefix: "/votes" })
           "feed-actualizado",
           JSON.stringify({
             type: "vote_updated",
-            postId: body.postId,
+            postId: postId,
             score: result.score,
-            userName: body.userName,
+            userName: userName,
           }),
         );
       }
@@ -29,15 +27,17 @@ export const votesRoutes = new Elysia({ prefix: "/votes" })
       return result;
     },
     {
-      body: t.Object({
-        postId: t.Number(),
-        userName: t.String(),
-        value: t.Number(),
-      }),
+      body: voteSchema,
     },
   )
 
   // GET /votes/:postId - Obtener puntos de un post
-  .get("/:postId", async ({ params }) => {
-    return await VotesController.getPostScore(parseInt(params.postId));
-  });
+  .get(
+    "/:postId",
+    async ({ params }) => {
+      return await VotesController.getPostScore(parseInt(params.postId));
+    },
+    {
+      params: getPostScoreSchema,
+    },
+  );
