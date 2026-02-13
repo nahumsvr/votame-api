@@ -61,7 +61,7 @@ export class VotesService {
       .select({
         id: posts.id,
         title: posts.title,
-        description: posts.description,
+
         imageUrl: posts.imageUrl,
         createdAt: posts.createdAt,
         score: sql<number>`COALESCE(SUM(${votes.value}), 0)`,

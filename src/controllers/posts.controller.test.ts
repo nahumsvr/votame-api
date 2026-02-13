@@ -3,9 +3,27 @@ import { PostsController } from "./posts.controller";
 
 // Mock data for trending posts (ordered by score descending)
 const mockTrendingPosts = [
-  { id: 3, title: "Post 3", description: "Desc 3", imageUrl: "url3", createdAt: new Date(), score: 100 },
-  { id: 1, title: "Post 1", description: "Desc 1", imageUrl: "url1", createdAt: new Date(), score: 50 },
-  { id: 2, title: "Post 2", description: "Desc 2", imageUrl: "url2", createdAt: new Date(), score: 25 },
+  {
+    id: 3,
+    title: "Post 3",
+    imageUrl: "url3",
+    createdAt: new Date(),
+    score: 100,
+  },
+  {
+    id: 1,
+    title: "Post 1",
+    imageUrl: "url1",
+    createdAt: new Date(),
+    score: 50,
+  },
+  {
+    id: 2,
+    title: "Post 2",
+    imageUrl: "url2",
+    createdAt: new Date(),
+    score: 25,
+  },
 ];
 
 // Mock PostsService

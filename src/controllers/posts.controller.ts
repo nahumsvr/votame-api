@@ -5,7 +5,7 @@ export class PostsController {
   static async create(data: {
     title: string;
     userName: string;
-    description: string;
+
     imageUrl: string;
   }) {
     try {
@@ -85,7 +85,7 @@ export class PostsController {
     id: number,
     data: Partial<{
       title: string;
-      description: string;
+
       imageUrl: string;
     }>,
   ) {

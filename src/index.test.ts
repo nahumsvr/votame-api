@@ -6,7 +6,7 @@ import { cors } from "@elysiajs/cors";
 let postsStore: Array<{
   id: number;
   title: string;
-  description: string;
+
   imageUrl: string;
   userName: string;
   createdAt: Date;
@@ -31,7 +31,7 @@ const createTestApp = () => {
         const newPost = {
           id: nextId++,
           title: body.title,
-          description: body.description,
+
           imageUrl: body.imageUrl,
           userName: body.userName,
           createdAt: new Date(),
@@ -45,7 +45,7 @@ const createTestApp = () => {
       {
         body: t.Object({
           title: t.String({ minLength: 1, maxLength: 255 }),
-          description: t.String(),
+
           imageUrl: t.String(),
           userName: t.String(),
         }),
@@ -83,7 +83,7 @@ describe("POST /posts", () => {
 
     const newPost = {
       title: "Test Post",
-      description: "This is a test description",
+
       imageUrl: "https://example.com/image.jpg",
       userName: "testuser",
     };
@@ -101,7 +101,7 @@ describe("POST /posts", () => {
     expect(data.success).toBe(true);
     expect(data.post).toBeDefined();
     expect(data.post.title).toBe(newPost.title);
-    expect(data.post.description).toBe(newPost.description);
+
     expect(data.post.imageUrl).toBe(newPost.imageUrl);
     expect(data.post.userName).toBe(newPost.userName);
     expect(data.post.id).toBeDefined();
@@ -113,7 +113,7 @@ describe("POST /posts", () => {
 
     const invalidPost = {
       title: "Test Post",
-      description: "This is a test description",
+
       imageUrl: "https://example.com/image.jpg",
       // userName is missing
     };
@@ -134,7 +134,6 @@ describe("POST /posts", () => {
     const app = createTestApp();
 
     const invalidPost = {
-      description: "This is a test description",
       imageUrl: "https://example.com/image.jpg",
       userName: "testuser",
       // title is missing
@@ -156,7 +155,7 @@ describe("POST /posts", () => {
 
     const invalidPost = {
       title: "a".repeat(256), // exceeds maxLength of 255
-      description: "This is a test description",
+
       imageUrl: "https://example.com/image.jpg",
       userName: "testuser",
     };
@@ -180,7 +179,7 @@ describe("GET /posts/:id", () => {
     // First create a post
     const newPost = {
       title: "Test Post",
-      description: "This is a test description",
+
       imageUrl: "https://example.com/image.jpg",
       userName: "testuser",
     };
@@ -204,7 +203,7 @@ describe("GET /posts/:id", () => {
     expect(data.post).toBeDefined();
     expect(data.post.id).toBe(1);
     expect(data.post.title).toBe(newPost.title);
-    expect(data.post.description).toBe(newPost.description);
+
     expect(data.post.imageUrl).toBe(newPost.imageUrl);
     expect(data.post.userName).toBe(newPost.userName);
   });

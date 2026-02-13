@@ -7,7 +7,7 @@ export class PostsService {
   static async create(data: {
     title: string;
     userName: string;
-    description: string;
+
     imageUrl: string;
   }) {
     const [newPost] = await db
@@ -15,7 +15,7 @@ export class PostsService {
       .values({
         title: data.title,
         userName: data.userName,
-        description: data.description,
+
         imageUrl: data.imageUrl,
         createdAt: new Date(),
       })
@@ -34,7 +34,7 @@ export class PostsService {
       .select({
         id: posts.id,
         title: posts.title,
-        description: posts.description,
+
         imageUrl: posts.imageUrl,
         createdAt: posts.createdAt,
         score: sql<number>`COALESCE(SUM(${votes.value}), 0)`.as("score"),
@@ -56,7 +56,7 @@ export class PostsService {
       .select({
         id: posts.id,
         title: posts.title,
-        description: posts.description,
+
         imageUrl: posts.imageUrl,
         createdAt: posts.createdAt,
         score: sql<number>`COALESCE(SUM(${votes.value}), 0)`.as("score"),
@@ -74,7 +74,7 @@ export class PostsService {
     id: number,
     data: Partial<{
       title: string;
-      description: string;
+
       imageUrl: string;
     }>,
   ) {
@@ -99,7 +99,7 @@ export class PostsService {
       .select({
         id: posts.id,
         title: posts.title,
-        description: posts.description,
+
         imageUrl: posts.imageUrl,
         createdAt: posts.createdAt,
         score: sql<number>`COALESCE(SUM(${votes.value}), 0)`.as("score"),
