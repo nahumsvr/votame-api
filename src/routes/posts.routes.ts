@@ -11,6 +11,11 @@ export const postsRoutes = new Elysia({ prefix: "/posts" })
     return await PostsController.getAll();
   })
 
+  // GET /posts/trending - Top posts por puntaje
+  .get("/trending", async () => {
+    return await PostsController.getTrending();
+  })
+
   // GET /posts/:id - Obtener uno
   .get("/:id", async ({ params }) => {
     return await PostsController.getById(parseInt(params.id));

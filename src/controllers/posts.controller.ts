@@ -40,6 +40,21 @@ export class PostsController {
     }
   }
 
+  static async getTrending() {
+    try {
+      const trendingPosts = await PostsService.getTrending();
+      return {
+        success: true,
+        posts: trendingPosts,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: "Error al obtener trending posts",
+      };
+    }
+  }
+
   // Obtener un post
   static async getById(id: number) {
     try {

@@ -1,6 +1,6 @@
 import { db } from "../db";
-import { posts } from "../db/schema";
-import { eq, desc } from "drizzle-orm";
+import { posts, votes } from "../db/schema";
+import { eq, desc, sql } from "drizzle-orm";
 
 export class PostsService {
   // Crear un post
@@ -21,17 +21,50 @@ export class PostsService {
       })
       .returning();
 
-    return newPost;
+    return {
+      ...newPost,
+      score: 0,
+    };
   }
 
   // Obtener todos los posts
   static async getAll() {
-    return await db.select().from(posts).orderBy(desc(posts.createdAt));
+    // return await db.select().from(posts).orderBy(desc(posts.createdAt));
+    const result = await db
+      .select({
+        id: posts.id,
+        title: posts.title,
+        description: posts.description,
+        imageUrl: posts.imageUrl,
+        createdAt: posts.createdAt,
+        score: sql<number>`COALESCE(SUM(${votes.value}), 0)`.as("score"),
+      })
+      .from(posts)
+      .leftJoin(votes, eq(posts.id, votes.postId))
+      .groupBy(posts.id)
+      .orderBy(desc(posts.createdAt)); // O puedes ordenar por score
+
+    return result;
   }
 
   // Obtener un post por ID
   static async getById(id: number) {
-    const result = await db.select().from(posts).where(eq(posts.id, id));
+    // const result = await db.select().from(posts).where(eq(posts.id, id));
+
+    // return result[0] || null;
+    const result = await db
+      .select({
+        id: posts.id,
+        title: posts.title,
+        description: posts.description,
+        imageUrl: posts.imageUrl,
+        createdAt: posts.createdAt,
+        score: sql<number>`COALESCE(SUM(${votes.value}), 0)`.as("score"),
+      })
+      .from(posts)
+      .leftJoin(votes, eq(posts.id, votes.postId))
+      .where(eq(posts.id, id))
+      .groupBy(posts.id);
 
     return result[0] || null;
   }
@@ -41,7 +74,6 @@ export class PostsService {
     id: number,
     data: Partial<{
       title: string;
-      userName: string;
       description: string;
       imageUrl: string;
     }>,
@@ -59,5 +91,25 @@ export class PostsService {
   static async delete(id: number) {
     await db.delete(posts).where(eq(posts.id, id));
     return true;
+  }
+
+  // Obtener posts ordenados por puntaje (trending)
+  static async getTrending() {
+    const result = await db
+      .select({
+        id: posts.id,
+        title: posts.title,
+        description: posts.description,
+        imageUrl: posts.imageUrl,
+        createdAt: posts.createdAt,
+        score: sql<number>`COALESCE(SUM(${votes.value}), 0)`.as("score"),
+      })
+      .from(posts)
+      .leftJoin(votes, eq(posts.id, votes.postId))
+      .groupBy(posts.id)
+      .orderBy(sql`score DESC`)
+      .limit(10); // Top 10
+
+    return result;
   }
 }

@@ -2,12 +2,14 @@ import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { postsRoutes } from "./routes/posts.routes";
 import { feedWebSocket } from "./websockets/feed.ws";
+import { votesRoutes } from "./routes/votes.routes";
 
 const app = new Elysia()
   .use(cors())
 
   // Montar rutas HTTP
   .use(postsRoutes)
+  .use(votesRoutes)
 
   // Montar WebSockets
   .use(feedWebSocket)
