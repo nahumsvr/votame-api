@@ -4,8 +4,8 @@ export class PostsController {
   // Crear post
   static async create(data: {
     title: string;
+    link?: string;
     userName: string;
-
     imageUrl: string;
   }) {
     try {
@@ -85,6 +85,7 @@ export class PostsController {
     id: number,
     data: Partial<{
       title: string;
+      link: string;
 
       imageUrl: string;
     }>,

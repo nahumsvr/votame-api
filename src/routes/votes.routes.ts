@@ -8,8 +8,8 @@ export const votesRoutes = new Elysia({ prefix: "/votes" })
   .post(
     "/",
     async ({ body, server }) => {
-      const { postId, userName, value } = body;
-      const result = await VotesController.vote(postId, userName, value);
+      const { postId, userName, points } = body;
+      const result = await VotesController.vote(postId, userName, points);
 
       // Notificar cambio de puntos por WebSocket
       if (result.success) {

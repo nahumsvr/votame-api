@@ -6,6 +6,7 @@ import { cors } from "@elysiajs/cors";
 let postsStore: Array<{
   id: number;
   title: string;
+  link: string;
 
   imageUrl: string;
   userName: string;
@@ -31,6 +32,7 @@ const createTestApp = () => {
         const newPost = {
           id: nextId++,
           title: body.title,
+          link: body.link,
 
           imageUrl: body.imageUrl,
           userName: body.userName,
@@ -45,6 +47,7 @@ const createTestApp = () => {
       {
         body: t.Object({
           title: t.String({ minLength: 1, maxLength: 255 }),
+          link: t.String(),
 
           imageUrl: t.String(),
           userName: t.String(),
@@ -83,6 +86,7 @@ describe("POST /posts", () => {
 
     const newPost = {
       title: "Test Post",
+      link: "https://example.com/link",
 
       imageUrl: "https://example.com/image.jpg",
       userName: "testuser",
@@ -113,6 +117,7 @@ describe("POST /posts", () => {
 
     const invalidPost = {
       title: "Test Post",
+      link: "https://example.com/link",
 
       imageUrl: "https://example.com/image.jpg",
       // userName is missing
@@ -135,6 +140,7 @@ describe("POST /posts", () => {
 
     const invalidPost = {
       imageUrl: "https://example.com/image.jpg",
+      link: "https://example.com/link",
       userName: "testuser",
       // title is missing
     };
@@ -155,6 +161,7 @@ describe("POST /posts", () => {
 
     const invalidPost = {
       title: "a".repeat(256), // exceeds maxLength of 255
+      link: "https://example.com/link",
 
       imageUrl: "https://example.com/image.jpg",
       userName: "testuser",
@@ -179,6 +186,7 @@ describe("GET /posts/:id", () => {
     // First create a post
     const newPost = {
       title: "Test Post",
+      link: "https://example.com/link",
 
       imageUrl: "https://example.com/image.jpg",
       userName: "testuser",

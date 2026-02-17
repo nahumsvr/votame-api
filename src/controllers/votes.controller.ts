@@ -2,21 +2,21 @@
 import { VotesService } from "../services/votes.service";
 
 export class VotesController {
-  static async vote(postId: number, userName: string, value: number) {
-    if (value !== 0 && value !== 1 && value !== 3) {
+  static async vote(postId: number, userName: string, points: number) {
+    if (points !== 0 && points !== 1 && points !== 3) {
       return {
         success: false,
         error: "Valor de voto inválido",
       };
     }
     try {
-      const result = await VotesService.vote(postId, userName, value);
+      const result = await VotesService.vote(postId, userName, points);
       const newScore = await VotesService.getPostScore(postId);
 
       return {
         success: true,
         action: result.action,
-        currentVote: result.value,
+        currentVote: result.points,
         score: newScore,
       };
     } catch (error) {

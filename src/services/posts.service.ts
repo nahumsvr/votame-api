@@ -6,16 +6,16 @@ export class PostsService {
   // Crear un post
   static async create(data: {
     title: string;
+    link?: string;
     userName: string;
-
     imageUrl: string;
   }) {
     const [newPost] = await db
       .insert(posts)
       .values({
         title: data.title,
+        link: data.link || null,
         userName: data.userName,
-
         imageUrl: data.imageUrl,
         createdAt: new Date(),
       })
@@ -29,15 +29,15 @@ export class PostsService {
 
   // Obtener todos los posts
   static async getAll() {
-    // return await db.select().from(posts).orderBy(desc(posts.createdAt));
     const result = await db
       .select({
         id: posts.id,
+        userName: posts.userName,
         title: posts.title,
-
+        link: posts.link,
         imageUrl: posts.imageUrl,
         createdAt: posts.createdAt,
-        score: sql<number>`COALESCE(SUM(${votes.value}), 0)`.as("score"),
+        score: sql<number>`COALESCE(SUM(${votes.points}), 0)`.as("score"),
       })
       .from(posts)
       .leftJoin(votes, eq(posts.id, votes.postId))
@@ -55,11 +55,12 @@ export class PostsService {
     const result = await db
       .select({
         id: posts.id,
+        userName: posts.userName,
         title: posts.title,
-
+        link: posts.link,
         imageUrl: posts.imageUrl,
         createdAt: posts.createdAt,
-        score: sql<number>`COALESCE(SUM(${votes.value}), 0)`.as("score"),
+        score: sql<number>`COALESCE(SUM(${votes.points}), 0)`.as("score"),
       })
       .from(posts)
       .leftJoin(votes, eq(posts.id, votes.postId))
@@ -74,7 +75,7 @@ export class PostsService {
     id: number,
     data: Partial<{
       title: string;
-
+      link: string;
       imageUrl: string;
     }>,
   ) {
@@ -98,17 +99,17 @@ export class PostsService {
     const result = await db
       .select({
         id: posts.id,
+        userName: posts.userName,
         title: posts.title,
-
+        link: posts.link,
         imageUrl: posts.imageUrl,
         createdAt: posts.createdAt,
-        score: sql<number>`COALESCE(SUM(${votes.value}), 0)`.as("score"),
+        score: sql<number>`COALESCE(SUM(${votes.points}), 0)`.as("score"),
       })
       .from(posts)
       .leftJoin(votes, eq(posts.id, votes.postId))
       .groupBy(posts.id)
-      .orderBy(sql`score DESC`)
-      .limit(10); // Top 10
+      .orderBy(sql`score DESC`);
 
     return result;
   }

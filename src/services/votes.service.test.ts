@@ -5,7 +5,7 @@ import { VotesService } from "./votes.service";
 const mockSelect = mock(() => ({}));
 const mockFrom = mock(() => ({}));
 const mockWhere = mock(() => ({}));
-const mockLimit = mock(() => Promise.resolve([]));
+const mockLimit = mock(() => Promise.resolve([] as any[]));
 const mockInsert = mock(() => ({}));
 const mockValues = mock(() => Promise.resolve());
 const mockDelete = mock(() => ({}));
@@ -18,16 +18,18 @@ let mockScoreResult: any = [{ total: 0 }];
 
 // Reset and setup mock chain
 const setupMocks = () => {
-  mockLimit.mockImplementation(() => Promise.resolve(mockExistingVote ? [mockExistingVote] : []));
+  mockLimit.mockImplementation(() =>
+    Promise.resolve(mockExistingVote ? [mockExistingVote] : []),
+  );
   mockWhere.mockImplementation(() => ({ limit: mockLimit }));
   mockFrom.mockImplementation(() => ({ where: mockWhere }));
   mockSelect.mockImplementation((selectArg?: any) => {
     // If selecting score (has 'total' key)
-    if (selectArg && 'total' in selectArg) {
+    if (selectArg && "total" in selectArg) {
       return {
         from: () => ({
-          where: () => Promise.resolve(mockScoreResult)
-        })
+          where: () => Promise.resolve(mockScoreResult),
+        }),
       };
     }
     return { from: mockFrom };
@@ -63,25 +65,25 @@ describe("VotesService", () => {
 
       const result = await VotesService.vote(1, "user123", 1);
 
-      expect(result).toEqual({ action: "created", value: 1 });
+      expect(result).toEqual({ action: "created", points: 1 });
     });
 
     it("should update an existing vote when a different vote value is provided", async () => {
-      mockExistingVote = { id: 1, postId: 1, userName: "user123", value: 1 };
+      mockExistingVote = { id: 1, postId: 1, userName: "user123", points: 1 };
       setupMocks();
 
       const result = await VotesService.vote(1, "user123", 3);
 
-      expect(result).toEqual({ action: "changed", value: 3 });
+      expect(result).toEqual({ action: "changed", points: 3 });
     });
 
     it("should remove an existing vote when the same vote value is provided (toggle off)", async () => {
-      mockExistingVote = { id: 1, postId: 1, userName: "user123", value: 1 };
+      mockExistingVote = { id: 1, postId: 1, userName: "user123", points: 1 };
       setupMocks();
 
       const result = await VotesService.vote(1, "user123", 1);
 
-      expect(result).toEqual({ action: "removed", value: 0 });
+      expect(result).toEqual({ action: "removed", points: 0 });
     });
   });
 

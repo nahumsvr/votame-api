@@ -11,7 +11,7 @@ import {
 export const posts = pgTable("posts", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
-
+  link: text("link"),
   imageUrl: text("image_url"), // Aquí guardas la URL de la foto
   userName: varchar("user_name", { length: 255 }).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
@@ -25,7 +25,7 @@ export const votes = pgTable(
       .notNull()
       .references(() => posts.id, { onDelete: "cascade" }),
     userName: varchar("user_name", { length: 255 }).notNull(), // IP, session ID, o user ID real
-    value: integer("value").notNull(), // 1 para upvote, -1 para downvote
+    points: integer("points").notNull(),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (table) => ({
